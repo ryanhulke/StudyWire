@@ -6,3 +6,4 @@ backend/study_tool.db
 __pycache__/
 frontend/src-tauri/icons
 frontend/src-tauri/Cargo.*
+frontend/dist/

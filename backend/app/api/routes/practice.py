@@ -2,15 +2,16 @@
 
 from datetime import date, timedelta
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
+from sqlalchemy import and_, or_
 
 from app.db import get_session
-from app.models import Card, Deck  # adjust import paths if needed
+from app.models import Card, Deck, SchedulingState
 
-router = APIRouter(prefix="/api/practice", tags=["practice"])
+router = APIRouter(prefix="/api", tags=["practice"])
 
 
 class PracticePool(str, Enum):
@@ -19,87 +20,51 @@ class PracticePool(str, Enum):
     NEW_ONLY = "new_only"
 
 
-class PracticeCardOut(Card.model_validate.__func__.__annotations__.get("return", Card)):  # type: ignore
-    """
-    Simple passthrough schema. If you already have a CardOut Pydantic model,
-    use that instead and delete this class.
-    """
-    pass
-
-
-@router.get("/cards", response_model=List[PracticeCardOut])
+@router.get("/practice_cards", response_model=list[Card])
 def get_practice_cards(
-    deck_id: int = Query(..., description="Deck to practice"),
-    pool: PracticePool = Query(
-        PracticePool.DUE_RECENT,
-        description="Which card pool to draw practice cards from",
-    ),
-    limit: Optional[int] = Query(
-        None, ge=1, le=500, description="If omitted, return all matching cards"
-    ),
+    deck_id: int = Query(...),
+    pool: PracticePool = Query(PracticePool.DUE_RECENT),
     session: Session = Depends(get_session),
 ):
-    """
-    Returns a list of cards for practice.
-
-    - Does NOT modify any scheduling data.
-    - The frontend is responsible for local session logic (Again/Good/etc).
-    """
-
     deck = session.get(Deck, deck_id)
     if not deck:
         raise HTTPException(status_code=404, detail="Deck not found")
 
     today = date.today()
 
-    stmt = select(Card).where(Card.deck_id == deck_id)
-
-    # The following assumes your Card model has fields:
-    # - due (date)
-    # - interval (int)
-    # - repetitions (int)
-    # If your review state lives in a separate table, adapt the joins accordingly.
+    # Decide query based on pool
     if pool == PracticePool.DUE_RECENT:
-        # Due cards plus some that were recently seen
-        try:
-            from app.models import CardReviewState  # if you have a separate table
-            # Example if you keep review state separate - adjust if not:
-            rs_stmt = (
-                select(Card)
-                .join(CardReviewState, CardReviewState.card_id == Card.id)
-                .where(
-                    Card.deck_id == deck_id,
-                    (
-                        (CardReviewState.due <= today)
-                        | (
-                            CardReviewState.due > today,
-                            CardReviewState.due <= today + timedelta(days=3),
-                        )
+        # Cards that are due now or within the next 3 days
+        stmt = (
+            select(Card)
+            .join(SchedulingState, SchedulingState.card_id == Card.id)
+            .where(
+                Card.deck_id == deck_id,
+                or_(
+                    SchedulingState.due <= today,
+                    and_(
+                        SchedulingState.due > today,
+                        SchedulingState.due <= today + timedelta(days=3),
                     ),
-                )
+                ),
             )
-            stmt = rs_stmt
-        except ImportError:
-            # Fallback if scheduling fields live directly on Card
-            stmt = stmt.where(
-                (Card.due <= today)
-                | (Card.due <= today + timedelta(days=3))
-            ).order_by(Card.due)
-    elif pool == PracticePool.NEW_ONLY:
-        # Cards never successfully reviewed
-        stmt = stmt.where(
-            getattr(Card, "repetitions", 0) == 0  # adapt if needed
+            .order_by(SchedulingState.due)
         )
-    # else pool == ALL: no extra filter
 
-    # This gets a bunch of candidates then we trim
+    elif pool == PracticePool.NEW_ONLY:
+        # Cards with repetitions == 0
+        stmt = (
+            select(Card)
+            .join(SchedulingState, SchedulingState.card_id == Card.id)
+            .where(
+                Card.deck_id == deck_id,
+                SchedulingState.repetitions == 0,
+            )
+        )
+
+    else:  # PracticePool.ALL
+        # All cards in deck, regardless of scheduling info
+        stmt = select(Card).where(Card.deck_id == deck_id)
+
     cards = session.exec(stmt).all()
-
-    # Trim and randomize a bit
-    if limit is not None and len(cards) > limit:
-        import random
-
-        random.shuffle(cards)
-        cards = cards[:limit]
-
     return cards
