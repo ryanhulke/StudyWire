@@ -1,0 +1,8 @@
+.directory
+frontend/node_modules
+package-lock.json
+frontend/package-lock.json
+backend/study_tool.db
+__pycache__/
+frontend/src-tauri/icons
+frontend/src-tauri/Cargo.*
