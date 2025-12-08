@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { ReviewView } from "./views/ReviewView";
 import { SourcesView } from "./views/SourcesView";
 import { CardsView } from "./views/CardsView";
+import { PracticeView } from "./views/PracticeView";
 
-type Tab = "review" | "sources" | "cards";
+type Tab = "review" | "practice" | "sources" | "cards";
 
 export const App: React.FC = () => {
   const [tab, setTab] = useState<Tab>("review");
@@ -18,6 +19,12 @@ export const App: React.FC = () => {
             onClick={() => setTab("review")}
           >
             Today
+          </button>
+          <button
+            className={tab === "practice" ? "active" : ""}
+            onClick={() => setTab("practice")}
+          >
+            Practice
           </button>
           <button
             className={tab === "sources" ? "active" : ""}
@@ -35,6 +42,7 @@ export const App: React.FC = () => {
       </header>
       <main className="app-main">
         {tab === "review" && <ReviewView />}
+        {tab === "practice" && <PracticeView />}
         {tab === "sources" && <SourcesView />}
         {tab === "cards" && <CardsView />}
       </main>

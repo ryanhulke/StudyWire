@@ -10,7 +10,7 @@ from sqlmodel import Session, select
 from app.db import get_session
 from app.models import Card, Deck  # adjust import paths if needed
 
-router = APIRouter(prefix="/practice", tags=["practice"])
+router = APIRouter(prefix="/api/practice", tags=["practice"])
 
 
 class PracticePool(str, Enum):
@@ -34,7 +34,9 @@ def get_practice_cards(
         PracticePool.DUE_RECENT,
         description="Which card pool to draw practice cards from",
     ),
-    limit: int = Query(30, ge=1, le=500),
+    limit: Optional[int] = Query(
+        None, ge=1, le=500, description="If omitted, return all matching cards"
+    ),
     session: Session = Depends(get_session),
 ):
     """
@@ -94,7 +96,7 @@ def get_practice_cards(
     cards = session.exec(stmt).all()
 
     # Trim and randomize a bit
-    if len(cards) > limit:
+    if limit is not None and len(cards) > limit:
         import random
 
         random.shuffle(cards)

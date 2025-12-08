@@ -155,13 +155,15 @@ export interface PracticeCard {
 export async function fetchPracticeCards(params: {
   deckId: number;
   pool: PracticePool;
-  limit: number;
+  limit?: number;
 }): Promise<PracticeCard[]> {
   const qs = new URLSearchParams({
     deck_id: String(params.deckId),
-    pool: params.pool,
-    limit: String(params.limit),
+    pool: params.pool
   });
+  if (params.limit) {
+    qs.set("limit", String(params.limit));
+  }
 
   const res = await fetch(`${API_BASE}/practice/cards?` + qs.toString());
   if (!res.ok) {

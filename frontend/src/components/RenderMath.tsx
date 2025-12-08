@@ -1,6 +1,4 @@
-import React, { useEffect, useRef } from "react";
-import renderMathInElement from "katex/contrib/auto-render";
-import "katex/dist/katex.min.css";
+import React from "react";
 
 interface RenderMathProps {
   text: string;
@@ -12,30 +10,16 @@ interface RenderMathProps {
  * \( ... \), \[ ... \], $...$, $$...$$ using KaTeX auto-render.
  */
 export const RenderMath: React.FC<RenderMathProps> = ({ text, className }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-
-    renderMathInElement(ref.current, {
-      delimiters: [
-        { left: "$$", right: "$$", display: true },
-        { left: "$", right: "$", display: false },
-        { left: "\\(", right: "\\)", display: false },
-        { left: "\\[", right: "\\]", display: true }
-      ],
-      throwOnError: false
-    });
-  }, [text]);
+  const lines = text.split("\n");
 
   return (
-    <div
-      ref={ref}
-      className={className}
-      // keep your existing line breaks
-      dangerouslySetInnerHTML={{
-        __html: text.replace(/\n/g, "<br/>")
-      }}
-    />
+    <div className={className}>
+      {lines.map((line, idx) => (
+        <React.Fragment key={idx}>
+          {line}
+          {idx < lines.length - 1 && <br />}
+        </React.Fragment>
+      ))}
+    </div>
   );
 };

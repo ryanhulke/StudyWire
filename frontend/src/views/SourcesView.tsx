@@ -192,14 +192,14 @@ export const SourcesView: React.FC = () => {
                   marginBottom: "0.25rem",
                   cursor: "pointer",
                   backgroundColor:
-                    s.id === selectedSourceId ? "#e5e7eb" : "transparent"
+                    s.id === selectedSourceId ? "#1f2937" : "transparent"
                 }}
                 onClick={() => loadSourceChunks(s.id)}
               >
                 <div style={{ fontSize: "0.9rem" }}>{s.title}</div>
                 <div
                   className="monospace-small"
-                  style={{ color: "#6b7280" }}
+                  style={{ color: "#94a3b8" }}
                 >
                   {s.path}
                 </div>
@@ -236,7 +236,7 @@ export const SourcesView: React.FC = () => {
                 </button>
               </div>
 
-              <div className="list" style={{ border: "1px solid #e5e7eb", borderRadius: "0.5rem", padding: "0.5rem" }}>
+              <div className="list" style={{ border: "1px solid #1f2937", borderRadius: "0.5rem", padding: "0.5rem" }}>
                 {chunks.map((c) => {
                   const selected = selectedChunkIds.includes(c.id);
                   return (
@@ -246,8 +246,8 @@ export const SourcesView: React.FC = () => {
                         borderRadius: "0.375rem",
                         padding: "0.4rem 0.5rem",
                         marginBottom: "0.35rem",
-                        backgroundColor: selected ? "#eff6ff" : "#f9fafb",
-                        border: "1px solid #e5e7eb",
+                        backgroundColor: selected ? "#1f2937" : "#0f172a",
+                        border: "1px solid #1f2937",
                         cursor: "pointer"
                       }}
                       onClick={() => toggleChunk(c.id)}
@@ -278,7 +278,7 @@ export const SourcesView: React.FC = () => {
                 style={{
                   marginTop: "0.75rem",
                   paddingTop: "0.75rem",
-                  borderTop: "1px solid #e5e7eb"
+                  borderTop: "1px solid #1f2937"
                 }}
               >
                 <h4 style={{ marginTop: 0 }}>Generate flashcards</h4>
@@ -366,12 +366,12 @@ export const SourcesView: React.FC = () => {
                 </div>
 
                 {message && (
-                  <p style={{ color: "#047857", fontSize: "0.85rem" }}>
+                  <p style={{ color: "#34d399", fontSize: "0.85rem" }}>
                     {message}
                   </p>
                 )}
                 {error && (
-                  <p style={{ color: "#b91c1c", fontSize: "0.85rem" }}>
+                  <p style={{ color: "#fca5a5", fontSize: "0.85rem" }}>
                     {error}
                   </p>
                 )}
@@ -384,13 +384,13 @@ export const SourcesView: React.FC = () => {
                         <div
                           key={idx}
                           style={{
-                            border: "1px solid #e5e7eb",
+                            border: "1px solid #1f2937",
                             borderRadius: "0.5rem",
                             padding: "0.5rem 0.6rem",
                             marginBottom: "0.35rem",
                             backgroundColor: g.selected
-                              ? "#ecfdf5"
-                              : "#f9fafb"
+                              ? "#1f2937"
+                              : "#0f172a"
                           }}
                         >
                           <div

@@ -85,10 +85,10 @@ export const CardsView: React.FC = () => {
 
       {loading && <p>Loading cards...</p>}
       {error && (
-        <p style={{ color: "#b91c1c", fontSize: "0.85rem" }}>{error}</p>
+        <p style={{ color: "#fca5a5", fontSize: "0.85rem" }}>{error}</p>
       )}
       {message && (
-        <p style={{ color: "#047857", fontSize: "0.85rem" }}>{message}</p>
+        <p style={{ color: "#34d399", fontSize: "0.85rem" }}>{message}</p>
       )}
 
       {!loading && !cards.length && selectedDeckId != null && (
@@ -103,11 +103,11 @@ export const CardsView: React.FC = () => {
             <div
               key={c.id}
               style={{
-                border: "1px solid #e5e7eb",
+                border: "1px solid #1f2937",
                 borderRadius: "0.5rem",
                 padding: "0.5rem 0.6rem",
                 marginBottom: "0.4rem",
-                backgroundColor: "#f9fafb"
+                backgroundColor: "#0f172a"
               }}
             >
               <div

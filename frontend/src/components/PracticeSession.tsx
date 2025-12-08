@@ -71,17 +71,17 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
   return (
     <div className="card">
       <h2>Practice - {deckName}</h2>
-      <p style={{ fontSize: "0.85rem", color: "#4b5563" }}>
+      <p style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
         Practice mode does <strong>not</strong> change your spaced repetition
         schedule.
       </p>
 
       <div
         style={{
-          border: "1px solid #d1d5db",
+          border: "1px solid #1f2937",
           borderRadius: "0.5rem",
           padding: "1rem",
-          backgroundColor: "#f9fafb",
+          backgroundColor: "#0f172a",
           marginTop: "0.75rem"
         }}
       >
