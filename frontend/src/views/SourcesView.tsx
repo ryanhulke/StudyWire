@@ -27,7 +27,7 @@ export const SourcesView: React.FC = () => {
   const [selectedDeckId, setSelectedDeckId] = useState<number | null>(null);
 
   const [numCards, setNumCards] = useState(5);
-  const [temperature, setTemperature] = useState(0.7);
+  const [temperature, setTemperature] = useState(0.0);
 
   const [generated, setGenerated] = useState<SelectableGeneratedCard[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);

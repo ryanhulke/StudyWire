@@ -7,3 +7,5 @@ __pycache__/
 frontend/src-tauri/icons
 frontend/src-tauri/Cargo.*
 frontend/dist/
+backend.log
+llama.log
