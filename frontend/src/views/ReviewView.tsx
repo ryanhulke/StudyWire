@@ -94,10 +94,10 @@ export const ReviewView: React.FC = () => {
         <div style={{ marginTop: "1rem" }}>
           <div
             style={{
-              border: "1px solid #1f2937",
+              border: "1px solid #3b3b3b",
               borderRadius: "0.5rem",
               padding: "1rem",
-              backgroundColor: "#0f172a"
+              backgroundColor: "#404040"
             }}
           >
             <div style={{ marginBottom: "0.75rem" }}>
