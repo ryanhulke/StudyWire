@@ -4,7 +4,7 @@ import { SourcesView } from "./views/SourcesView";
 import { CardsView } from "./views/CardsView";
 import { PracticeView } from "./views/PracticeView";
 
-type Tab = "review" | "practice" | "sources" | "cards";
+type Tab = "review" | "practice" | "create" | "cards";
 
 export const App: React.FC = () => {
   const [tab, setTab] = useState<Tab>("review");
@@ -27,10 +27,10 @@ export const App: React.FC = () => {
             Practice
           </button>
           <button
-            className={tab === "sources" ? "active" : ""}
-            onClick={() => setTab("sources")}
+            className={tab === "create" ? "active" : ""}
+            onClick={() => setTab("create")}
           >
-            Sources
+            Create
           </button>
           <button
             className={tab === "cards" ? "active" : ""}
@@ -43,7 +43,7 @@ export const App: React.FC = () => {
       <main className="app-main">
         {tab === "review" && <ReviewView />}
         {tab === "practice" && <PracticeView />}
-        {tab === "sources" && <SourcesView />}
+        {tab === "create" && <SourcesView />}
         {tab === "cards" && <CardsView />}
       </main>
     </div>

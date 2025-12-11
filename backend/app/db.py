@@ -16,12 +16,6 @@ def get_session() -> Generator[Session, None, None]:
 
 
 def init_db() -> None:
-    """
-    Initialize the database.
-
-    Import models inside the function to ensure all tables are registered
-    before calling create_all.
-    """
-    from . import models  # noqa: F401
+    from . import models
 
     SQLModel.metadata.create_all(engine)

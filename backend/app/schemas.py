@@ -111,8 +111,9 @@ class ReviewSummary(BaseModel):
 
 
 class GenerateCardsRequest(BaseModel):
-    source_id: int
+    source_id: Optional[int] = None
     chunk_ids: Optional[List[int]] = None
+    instructions: Optional[str] = None
     num_cards: int = 10
     temperature: float = 0.7
 

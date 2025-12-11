@@ -7,9 +7,10 @@ import httpx
 
 from .config import LLM_API_BASE, LLM_API_KEY, LLM_MODEL_NAME
 
+na = "N/A"
 
 async def call_llm_for_cards(
-    text: str, num_cards: int, temperature: float
+    text: str, instructions: str | None, num_cards: int, temperature: float
 ) -> List[dict]:
     """
     Call the local LLM to generate flashcards from the given text.
@@ -24,7 +25,7 @@ async def call_llm_for_cards(
     """
     system_prompt = (
         "You are a helpful study tutor that writes high-quality flashcards.\n"
-        "Given study material, you will generate concise question-answer flashcards.\n"
+        "Given study material and/or instructions from user, you will generate concise question-answer flashcards.\n"
         "Return ONLY valid JSON with this exact structure:\n"
         '{ \"cards\": [ { \"front\": \"...\", \"back\": \"...\" }, ... ] }\n'
         "Do not include any explanations or comments.\n"
@@ -43,7 +44,9 @@ async def call_llm_for_cards(
         - Some argue that suffering results from human free will and that God values free will so much that He allows the consequences of bad choices. However, this does not explain natural disasters or diseases. Soul-Making Theodicy (John Hick) 
         - Some argue that suffering builds character and is necessary for moral and spiritual growth. 
         Antony's counter would be: Does suffering really need to be this extreme? Wouldn't an all-loving God design a world where growth happens without unbearable suffering? Skeptical Theism 
-        - Some theists argue that just because we don't see a good reason for suffering does not mean there isn't one. God's ways may be beyond human understanding. However, this can be criticized as an argument from ignorance (assuming God's reason exists simply because we don't know it).
+        - Some theists argue that just because we don't see a good reason for suffering does not mean there isn't one. God's ways may be beyond human understanding. However, this can be criticized as an argument from ignorance (assuming God's reason exists simply because we don't know it).\n
+        ADDITIONAL INSTRUCTIONS FROM USER:\n
+        one should be about the main claim
     """)
     example_response = (
         """{
@@ -64,6 +67,7 @@ async def call_llm_for_cards(
         "Focus on the most important definitions, concepts, equations, and relationships.\n"
         "TEXT:\n"
         f"{text}\n"
+        f"ADDITIONAL INSTRUCTIONS FROM USER:\n {instructions if instructions is not None else na}"
     )
 
     payload = {

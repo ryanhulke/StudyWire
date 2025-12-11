@@ -126,8 +126,9 @@ export async function bulkCreateCards(
 }
 
 export async function generateCardsFromSource(params: {
-  source_id: number;
-  chunk_ids?: number[];
+  source_id?: number; // optional
+  chunk_ids?: number[]; // optional
+  instructions?: string; // optional
   num_cards: number;
   temperature: number;
 }): Promise<GeneratedCard[]> {
