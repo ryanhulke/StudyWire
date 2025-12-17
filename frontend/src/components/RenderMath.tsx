@@ -8,7 +8,6 @@ interface RenderMathProps {
   className?: string;
 }
 
-
 export const RenderMath: React.FC<RenderMathProps> = ({ text, className }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 

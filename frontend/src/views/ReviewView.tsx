@@ -5,10 +5,10 @@ import type { ReviewCard } from "../types";
 import { RenderMath } from "../components/RenderMath";
 
 const ratingLabels: { label: string; value: number; className?: string }[] = [
-  { label: "Again", value: 1, className: "danger" },
-  { label: "Hard", value: 2 },
-  { label: "Good", value: 3, className: "primary" },
-  { label: "Easy", value: 4 }
+  { label: "Miss", value: 1, className: "missed" },
+  { label: "Hard", value: 2, className: "hard" },
+  { label: "Good", value: 3, className: "good" },
+  { label: "Easy", value: 4, className: "easy" }
 ];
 
 export const ReviewView: React.FC = () => {
@@ -64,15 +64,18 @@ export const ReviewView: React.FC = () => {
         Due cards:{" "}
         <strong>{dueCount !== null ? dueCount : "loading..."}</strong>
       </p>
-      <div className="button-row" style={{ marginBottom: "0.75rem" }}>
-        <button
-          className="button primary"
-          onClick={loadNextCard}
-          disabled={loadingCard}
-        >
-          {currentCard ? "Next card" : "Start review"}
-        </button>
-      </div>
+            {!currentCard && (
+        <div className="button-row" style={{ marginBottom: "0.75rem" }}>
+          <button
+            className="button"
+            onClick={loadNextCard}
+            disabled={loadingCard || dueCount === null || dueCount === 0}
+          >
+            Start review
+          </button>
+        </div>
+      )}
+
 
       {error && (
         <p style={{ color: "#fca5a5", fontSize: "0.85rem" }}>{error}</p>

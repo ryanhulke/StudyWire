@@ -12,15 +12,20 @@ interface PracticeSessionProps {
   onDone: () => void;
 }
 
+interface HistoryEntry {
+  card: PracticeCard;
+  addedAgain: boolean;
+}
+
 export const PracticeSession: React.FC<PracticeSessionProps> = ({
   cards,
   deckName,
   onDone
 }) => {
   const [queue, setQueue] = useState<PracticeCard[]>(cards);
-  const [index, setIndex] = useState(0);
   const [showBack, setShowBack] = useState(false);
   const [seen, setSeen] = useState(0);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   if (queue.length === 0) {
     return (
@@ -39,32 +44,59 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
     );
   }
 
-  const card = queue[index];
+  const card = queue[0];
 
-  const handleShowAnswer = () => setShowBack(true);
+  const handleFlipCard = () => setShowBack((prev) => !prev);
 
   const handleGrade = (grade: Grade) => {
-    setSeen((s) => s + 1);
+    setQueue((prevQueue) => {
+      if (prevQueue.length === 0) return prevQueue;
+      const current = prevQueue[0];
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { card: current, addedAgain: grade === "again" }
+      ]);
 
-    setQueue((prev) => {
-      const next = [...prev];
-      const current = next[index];
-      next.splice(index, 1); // remove current
+      setSeen((s) => s + 1);
+      setShowBack(false);
+
+      const nextQueue = prevQueue.slice(1);
+    
 
       if (grade === "again") {
         // see it again later this session
-        next.push(current);
+        nextQueue.push(current);
       }
 
-      return next;
+      return nextQueue;
     });
+  };
+  const handlePreviousCard = () => {
+    setHistory((prevHistory) => {
+      if (prevHistory.length === 0) return prevHistory;
 
-    setShowBack(false);
-    setIndex((prevIdx) => {
-      if (index >= queue.length - 1) {
-        return 0;
-      }
-      return prevIdx;
+      const previousEntry = prevHistory[prevHistory.length - 1];
+
+      setQueue((prevQueue) => {
+        let nextQueue = [...prevQueue];
+
+        if (previousEntry.addedAgain) {
+          const againIndex = nextQueue.findIndex(
+            (queuedCard) => queuedCard.id === previousEntry.card.id
+          );
+
+          if (againIndex !== -1) {
+            nextQueue.splice(againIndex, 1);
+          }
+        }
+
+        return [previousEntry.card, ...nextQueue];
+      });
+
+      setSeen((s) => Math.max(0, s - 1));
+      setShowBack(false);
+
+      return prevHistory.slice(0, -1);
     });
   };
 
@@ -102,34 +134,44 @@ export const PracticeSession: React.FC<PracticeSessionProps> = ({
         )}
       </div>
 
-      {!showBack ? (
-        <div className="button-row" style={{ marginTop: "0.75rem" }}>
-          <button className="button primary" onClick={handleShowAnswer}>
-            Show answer
-          </button>
-        </div>
-      ) : (
+      <div className="button-row" style={{ marginTop: "0.75rem" }}>
+        <button
+          className="button"
+          disabled={history.length === 0}
+          onClick={handlePreviousCard}
+        >
+          Previous card
+        </button>
+        <button
+          className={`button ${showBack ? "" : "primary"}`}
+          onClick={handleFlipCard}
+        >
+          {showBack ? "Hide answer" : "Show answer"}
+        </button>
+      </div>
+
+      {showBack && (
         <div className="button-row" style={{ marginTop: "0.75rem" }}>
           <button
-            className="button small danger"
+            className="button small missed"
             onClick={() => handleGrade("again")}
           >
-            Again
+            Miss
           </button>
           <button
-            className="button small"
+            className="button small hard"
             onClick={() => handleGrade("hard")}
           >
             Hard
           </button>
           <button
-            className="button small primary"
+            className="button small good"
             onClick={() => handleGrade("good")}
           >
             Good
           </button>
           <button
-            className="button small"
+            className="button small easy"
             onClick={() => handleGrade("easy")}
           >
             Easy

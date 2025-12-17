@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ReviewView } from "./views/ReviewView";
-import { SourcesView } from "./views/SourcesView";
+import { SourcesView } from "./views/CreateView";
 import { CardsView } from "./views/CardsView";
 import { PracticeView } from "./views/PracticeView";
 
